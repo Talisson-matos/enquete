@@ -1,0 +1,11 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 2rem;
+  color: #333;
+}
+
+button {
+  cursor: pointer;
+}
