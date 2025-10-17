@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
@@ -68,7 +67,6 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [progressStates, setProgressStates] = useState<{ [key: string]: 'empty' | 'pending' | 'full' }>({});
   const [accordionStates, setAccordionStates] = useState<{ [key: string]: boolean }>({});
- 
 
   const handleOptionChange = (option: string) => {
     setSelectedOptions((prev) =>
@@ -77,7 +75,8 @@ const App: React.FC = () => {
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: name === 'motorista' ? value.toUpperCase() : value });
   };
 
   const handleCaptureChange = (key: keyof CapturedData, value: string) => {
@@ -87,18 +86,16 @@ const App: React.FC = () => {
   const handleSubmit = () => {
     setIsModalOpen(false);
     setShowEnquete(true);
-    // Initialize progress states for selected enquetes
     const initialProgress: { [key: string]: 'empty' | 'pending' | 'full' } = {};
     selectedOptions.forEach((opt) => {
       initialProgress[opt] = 'empty';
     });
-    // Add fixed enquetes from aba conferencia inicial, etc.
     initialProgress['Conferência placas/motorista/ordem de coleta'] = 'empty';
     initialProgress['Conferência notas/planilha'] = 'empty';
     initialProgress['Conferencia Mínimo ANTT Carga Geral'] = 'empty';
     initialProgress['Conferencia placas RNTRC/ Proprietario Cavalo'] = 'empty';
     initialProgress['PREENCHIMENTO COMPLETO E SALVAMENTO DA PLANILHA'] = 'empty';
-    initialProgress['CONFERENCIA DE NOTAS'] = 'empty';
+    initialProgress['CONFERÊNCIA DE NOTAS'] = 'empty';
     initialProgress['CONFIRMAR CARREGAMENTO'] = 'empty';
     initialProgress['LIBERAR DOCUMENTAÇÕES'] = 'empty';
     setProgressStates(initialProgress);
@@ -122,11 +119,13 @@ const App: React.FC = () => {
     setShowEnquete(false);
   };
 
- 
-
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    
+  };
 
   const createSummaryTxt = () => {
-    const summary = `
+    const summary = `    
 Nº PEDIDO: ${formData.numeroPedido}
 MOTORISTA: ${formData.motorista}
 CAVALO: ${formData.cavalo}
@@ -181,12 +180,45 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
     setAccordionStates({});
   };
 
-  const getTabs = () => {
-    const tabs: { name: string; content: React.ReactElement }[] = [];
+  const getTabStatus = (tabName: string) => {
+    if (tabName === 'CONFERÊNCIA INICIAL') {
+      const tasks = [
+        'Conferência placas/motorista/ordem de coleta',
+        'Conferência notas/planilha',
+        'Conferencia Mínimo ANTT Carga Geral',
+        'Conferencia placas RNTRC/ Proprietario Cavalo'
+      ];
+      const allFull = tasks.every((task) => progressStates[task] === 'full');
+      const anyPending = tasks.some((task) => progressStates[task] === 'pending');
+      return allFull ? 'full' : anyPending ? 'pending' : 'empty';
+    } else if (tabName === 'CARREGAMENTO E CONFERÊNCIA DE NOTAS') {
+      const tasks = [
+        'CONFERÊNCIA DE NOTAS',
+        'CONFIRMAR CARREGAMENTO',
+        'LIBERAR DOCUMENTAÇÕES'
+      ];
+      const allFull = tasks.every((task) => progressStates[task] === 'full');
+      const anyPending = tasks.some((task) => progressStates[task] === 'pending');
+      return allFull ? 'full' : anyPending ? 'pending' : 'empty';
+    } else if (tabName === 'PLANILHA PADRÃO') {
+      return progressStates['PREENCHIMENTO COMPLETO E SALVAMENTO DA PLANILHA'] || 'empty';
+    } else if (tabName === 'GUIA/DUPLICATA') {
+      const tasks = ['GNRE - GUIA DE ICMS', 'DUPLICATA'];
+      const allFull = tasks.every((task) => progressStates[task] === 'full');
+      const anyPending = tasks.some((task) => progressStates[task] === 'pending');
+      return allFull ? 'full' : anyPending ? 'pending' : 'empty';
+    } else {
+      return progressStates[tabName] || 'empty';
+    }
+  };
 
-    // Aba Conferencia Inicial (sempre presente)
+  const getTabs = () => {
+    const tabs: { name: string; content: React.ReactElement; index: number }[] = [];
+    let tabIndex = 1;
+
     tabs.push({
       name: 'CONFERÊNCIA INICIAL',
+      index: tabIndex++,
       content: (
         <div>
           <EnqueteItem
@@ -203,13 +235,11 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
             CAVALO: {formData.cavalo}<br />
             REBOQUE: {formData.reboque}
           </Accordion>
-
           <EnqueteItem
             label="Conferência notas/planilha"
             state={progressStates['Conferência notas/planilha']}
             onToggle={() => toggleProgress('Conferência notas/planilha')}
           />
-
           <EnqueteItem
             label="Conferencia Mínimo ANTT Carga Geral"
             state={progressStates['Conferencia Mínimo ANTT Carga Geral']}
@@ -226,7 +256,6 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
             LINHA: {formData.linha}<br />
             EIXOS: {formData.eixos}
           </Accordion>
-
           <EnqueteItem
             label="Conferencia placas RNTRC/ Proprietario Cavalo"
             state={progressStates['Conferencia placas RNTRC/ Proprietario Cavalo']}
@@ -249,10 +278,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       ),
     });
 
-    // Aba Liberação (se não preenchida no form)
     if (!formData.liberacao) {
       tabs.push({
         name: 'LIBERAÇÃO',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -284,10 +313,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba SM (se selecionada)
     if (selectedOptions.includes('SM')) {
       tabs.push({
         name: 'SM',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -320,10 +349,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba Redundância (se selecionada)
     if (selectedOptions.includes('REDUNDÂNCIA')) {
       tabs.push({
         name: 'REDUNDÂNCIA',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -348,10 +377,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba Importação (se selecionada)
     if (selectedOptions.includes('IMPORTAÇÃO')) {
       tabs.push({
         name: 'IMPORTAÇÃO',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -374,10 +403,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba CTE (se selecionada)
     if (selectedOptions.includes('CTE')) {
       tabs.push({
         name: 'CTE',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -391,6 +420,12 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               value={capturedData.cte || ''}
               onChange={(e) => handleCaptureChange('cte', e.target.value)}
             />
+            {capturedData.cte && (
+              <div className="copy-section">
+                <span>{`(CTe • ${capturedData.cte}) - ${formData.motorista}`}</span>
+                <button onClick={() => copyToClipboard(`(CTe • ${capturedData.cte}) - ${formData.motorista}`)}>Copiar</button>
+              </div>
+            )}
             <Accordion
               title="Informações"
               isOpen={accordionStates['cte'] || false}
@@ -400,8 +435,9 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               MOTORISTA: {formData.motorista}<br />
               REBOQUE: {formData.reboque}<br />
               LINHA: {formData.linha}<br />
-              Nº PEDIDO: {formData.numeroPedido}<br />
-              AO OCORRER SINISTRO LIGUE PARA A SEGURADORA 0800 1234 2016<br />
+              Nº PEDIDO: {formData.numeroPedido} <br />             
+              AO OCORRER UM SINISTRO LIGUE PARA CENTRAL DO SEGURO ATRAVES DO TELEFONE 0800 772 2016<br />
+              VALOR PARA EFEITO SEGURO DA CARGA: R$ <br />
               FRETE S/IMPOSTO: {formData.freteSemImposto}<br />
               FRETE C/IMPOSTO: {formData.freteComImposto}
             </Accordion>
@@ -410,10 +446,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba MDFE (se selecionada)
     if (selectedOptions.includes('MDFE')) {
       tabs.push({
         name: 'MDFE',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -433,6 +469,12 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               value={capturedData.mdfe || ''}
               onChange={(e) => handleCaptureChange('mdfe', e.target.value)}
             />
+            {capturedData.mdfe && (
+              <div className="copy-section">
+                <span>{`(MDFe • ${capturedData.mdfe}) - ${formData.motorista}`}</span>
+                <button onClick={() => copyToClipboard(`(MDFe • ${capturedData.mdfe}) - ${formData.motorista}`)}>Copiar</button>
+              </div>
+            )}
             <Accordion
               title="Lembretes"
               isOpen={accordionStates['mdfe'] || false}
@@ -446,10 +488,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba Pedágio (se selecionada)
     if (selectedOptions.includes('PEDÁGIO')) {
       tabs.push({
         name: 'PEDÁGIO',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -487,10 +529,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba CTRB (se selecionada)
     if (selectedOptions.includes('CTRB')) {
       tabs.push({
         name: 'CTRB',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -504,6 +546,12 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               value={capturedData.ctrb || ''}
               onChange={(e) => handleCaptureChange('ctrb', e.target.value)}
             />
+            {capturedData.ctrb && (
+              <div className="copy-section">
+                <span>{`(CTRB • ${capturedData.ctrb}) - ${formData.motorista}`}</span>
+                <button onClick={() => copyToClipboard(`(CTRB • ${capturedData.ctrb}) - ${formData.motorista}`)}>Copiar</button>
+              </div>
+            )}
             <Accordion
               title="Informações"
               isOpen={accordionStates['ctrb'] || false}
@@ -519,10 +567,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Aba Guia/Duplicata (se selecionada)
     if (selectedOptions.includes('GUIA/DUPLICATA')) {
       tabs.push({
         name: 'GUIA/DUPLICATA',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -536,6 +584,19 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               value={capturedData.gnreDuplicata || ''}
               onChange={(e) => handleCaptureChange('gnreDuplicata', e.target.value)}
             />
+            {capturedData.cte && (
+              <div className="copy-section">
+                <span>{`(GNRE • ${capturedData.cte}) - ${formData.motorista}`}</span>
+                <button onClick={() => copyToClipboard(`(GNRE • ${capturedData.cte}) - ${formData.motorista}`)}>Copiar</button>
+              </div>
+            )}
+            <Accordion
+              title="Informações"
+              isOpen={accordionStates['gnre'] || false}
+              onToggle={() => toggleAccordion('gnre')}
+            >
+              Informações adicionais sobre GNRE/DUPLICATA
+            </Accordion>
             <EnqueteItem
               label="DUPLICATA"
               state={progressStates['DUPLICATA']}
@@ -552,9 +613,9 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Planilha Padrão
     tabs.push({
       name: 'PLANILHA PADRÃO',
+      index: tabIndex++,
       content: (
         <div>
           <EnqueteItem
@@ -566,10 +627,10 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       ),
     });
 
-    // Aba Adiantamento (se selecionada)
     if (selectedOptions.includes('ADIANTAMENTO')) {
       tabs.push({
         name: 'ADIANTAMENTO',
+        index: tabIndex++,
         content: (
           <div>
             <EnqueteItem
@@ -592,9 +653,9 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
       });
     }
 
-    // Carregamento e Conferencia de Notas
     tabs.push({
       name: 'CARREGAMENTO E CONFERÊNCIA DE NOTAS',
+      index: tabIndex++,
       content: (
         <div>
           <EnqueteItem
@@ -640,36 +701,37 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
             transition={{ duration: 0.3 }}
           >
             <h2>Selecione as Opções</h2>
-            {optionsList.map((option) => (
-              <label key={option}>
-                <input
-                  type="checkbox"
-                  checked={selectedOptions.includes(option)}
-                  onChange={() => handleOptionChange(option)}
-                />
-                {option}
-              </label>
-            ))}
+            <div className="options-horizontal">
+              {optionsList.map((option) => (
+                <label key={option}>
+                  <input
+                    type="checkbox"
+                    checked={selectedOptions.includes(option)}
+                    onChange={() => handleOptionChange(option)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
             <h3>Formulário</h3>
             <input name="numeroPedido" placeholder="Nº PEDIDO" value={formData.numeroPedido} onChange={handleFormChange} />
+            <input name="linha" placeholder="LINHA" value={formData.linha} onChange={handleFormChange} />
+            <input name="itemFrete" placeholder="ITEM FRETE" value={formData.itemFrete} onChange={handleFormChange} />
             <input name="motorista" placeholder="MOTORISTA" value={formData.motorista} onChange={handleFormChange} />
             <input name="cavalo" placeholder="CAVALO" value={formData.cavalo} onChange={handleFormChange} />
             <input name="reboque" placeholder="REBOQUE" value={formData.reboque} onChange={handleFormChange} />
-            <input name="linha" placeholder="LINHA" value={formData.linha} onChange={handleFormChange} />
             <input name="proprietario" placeholder="PROPRIETARIO(CNPJ / CPF)" value={formData.proprietario} onChange={handleFormChange} />
-            <input name="itemFrete" placeholder="ITEM FRETE" value={formData.itemFrete} onChange={handleFormChange} />
-            <input name="eixos" placeholder="EIXOS" value={formData.eixos} onChange={handleFormChange} />
+            <input name="contaBancaria" placeholder="CONTA BANCARIA" value={formData.contaBancaria} onChange={handleFormChange} />
             <input name="liberacao" placeholder="LIBERAÇÃO" value={formData.liberacao} onChange={handleFormChange} />
             <input name="freteSemImposto" placeholder="FRETE S/IMPOSTO" value={formData.freteSemImposto} onChange={handleFormChange} />
             <input name="freteComImposto" placeholder="FRETE C/IMPOSTO" value={formData.freteComImposto} onChange={handleFormChange} />
-            <input name="contaBancaria" placeholder="CONTA BANCARIA" value={formData.contaBancaria} onChange={handleFormChange} />
+            <input name="eixos" placeholder="EIXOS" value={formData.eixos} onChange={handleFormChange} />
             <input name="freteTerceiroCheio" placeholder="FRETE TERCEIRO CHEIO" value={formData.freteTerceiroCheio} onChange={handleFormChange} />
             <input name="freteTerceiroTotal" placeholder="FRETE TERCEIRO TOTAL" value={formData.freteTerceiroTotal} onChange={handleFormChange} />
             <button onClick={handleSubmit}>Gerar Enquete</button>
           </motion.div>
         )}
       </AnimatePresence>
-
       {showEnquete && (
         <div>
           <button onClick={editOptions}>Editar Opções</button>
@@ -678,16 +740,16 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               <button
                 key={tab.name}
                 onClick={() => setActiveTab(tab.name)}
-                className={activeTab === tab.name ? 'active' : ''}
+                className={`tab-button ${activeTab === tab.name ? 'active' : ''} ${getTabStatus(tab.name)}`}
               >
-                {tab.name}
+                {`${tab.index}º ${tab.name}`}
               </button>
             ))}
           </div>
           <div className="tab-content">
             {tabs.find((tab) => tab.name === activeTab)?.content}
           </div>
-          <div className="final-options">            
+          <div className="final-options">
             <button onClick={createSummaryTxt}>CRIAR RESUMO</button>
             <button onClick={resetAll}>APAGAR TUDO</button>
           </div>
@@ -718,7 +780,7 @@ const EnqueteItem: React.FC<EnqueteItemProps> = ({ label, state, onToggle }) => 
 
   const getButtonText = () => {
     if (state === 'full') return '✔️';
-    if (state === 'pending') return '⚠️'; 
+    if (state === 'pending') return '⚠️';
     return '✏️';
   };
 
