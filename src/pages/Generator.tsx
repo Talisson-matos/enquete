@@ -82,32 +82,36 @@ const App: React.FC = () => {
 
       {/* Formulário Primordial */}
       <section className="form-section">
-        <textarea  id="textarea_compact"></textarea>
         <h2 className="section-title">Dados do Transporte</h2>
-        <div className="form-grid">
-          {[
-            { label: 'Filial', name: 'filial' },
-            { label: 'CTE', name: 'cte' },
-            { label: 'MDFe', name: 'mdfe' },
-            { label: 'Nome do Motorista', name: 'nomeMotorista' },
-            { label: 'Placa Cavalo', name: 'placaCavalo' },
-            { label: 'Placa Reboque', name: 'placaReboque' },
-            { label: 'Placa Reboque 2', name: 'placaReboque2' },
-            { label: 'Linha', name: 'linha' },
-            { label: 'Eixos', name: 'eixos' },
-            { label: 'Proprietário ANTT', name: 'proprietarioANTT' },
-          ].map(field => (
-            <div key={field.name} className="input-group">
-              <label>{field.label}</label>
-              <input
-                type="text"
-                name={field.name}
-                value={formData[field.name as keyof FormData]}
-                onChange={handleInputChange}
-                placeholder={field.label}
-              />
-            </div>
-          ))}
+        <div className="contant-form">
+          <textarea id="textarea_compact"></textarea>
+
+          <div className="form-grid">
+            {[
+              { label: 'Filial', name: 'filial' },
+              { label: 'CTE', name: 'cte' },
+              { label: 'MDFe', name: 'mdfe' },
+              { label: 'Nome do Motorista', name: 'nomeMotorista' },
+              { label: 'Placa Cavalo', name: 'placaCavalo' },
+              { label: 'Placa Reboque', name: 'placaReboque' },
+              { label: 'Placa Reboque 2', name: 'placaReboque2' },
+              { label: 'Linha', name: 'linha' },
+              { label: 'Eixos', name: 'eixos' },
+              { label: 'Proprietário ANTT', name: 'proprietarioANTT' },
+            ].map(field => (
+              <div key={field.name} className="input-group">
+                <label>{field.label}</label>
+                <input
+                  type="text"
+                  name={field.name}
+                  value={formData[field.name as keyof FormData]}
+                  onChange={handleInputChange}
+                  placeholder={field.label}
+                />
+              </div>
+            ))}
+          </div>
+
         </div>
         <button onClick={limparTudo} className="btn-clear">
           Limpar Tudo

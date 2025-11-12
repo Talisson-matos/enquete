@@ -171,6 +171,15 @@
   margin-bottom: 10px;
 }
 
+.form-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+}
+
+
 /* Adições ao App.css para a aba Pedágio */
 .aba-pedagio {
   display: flex;

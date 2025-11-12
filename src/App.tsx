@@ -339,7 +339,11 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               CAVALO: {formData.cavalo}<br />
               SM: {capturedData.sm || ''}
             </Accordion>
+            <div style={{ color: "white" }}>
+
+            </div>
           </div>
+
         ),
       });
     }
@@ -357,6 +361,54 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
               LINHA: {formData.linha}<br />
               ITEM FRETE: {formData.itemFrete}
             </Accordion>
+            <div style={{ color: "white" }}>
+
+              IMPORTAÇÃO XML <br /><br />
+
+              1)
+
+              - IMPORTAR PACOTE XML/PDF NO PORTAL UNIDOCS PARA DIRETORIO DO COMPUTADOR;<br />
+              ► https://unidocs.ambev.com.br/#/login - USUARIO: operacao.sp@samidtransportes.com.br SENHA: samidDFL@@1<br />
+              ►  ABA LATERAL "DOCUMENTOS" ►  "CONSULTA CT-e" ►  CLICAR BOTAO LUPA AZUL, CANTO DIREITO DA TELA , PARA ATUALIZAR<br />
+              ►  ABAIXO DO ROTULO "EMBARCADOR", MARCAR OS DOIS CHECKEDS CORRESPONDENTES AO CTE QUE SERÁ IMPORTADO<br />
+              ►  CLICAR NO BOTAO 'DOWLOAD XML/DACTE', PARA REALIZAR A IMPORTAÇÃO <br /><br />
+
+              - POSICIONAR O ARQUIVO XML NA PASTA XML UNIDOCS (PARA IMPORTAÇÃO)<br />
+              - CONFERIR SE VALOR DO FRETE SAMID NA PLANILHA CONFERE COM O VALOR DO FRETE QUE ESTA NO CTE UNIDOCS E CONFERIR FRETE TERCEIRO(CASO HOUVER);<br />
+              - CONFERIR SE AS ROTAS COINCIDEM;<br />
+              - CONFERIR O ENGATE ►  MOTORISTA, CAVALO, REBOQUE <br /><br />
+
+              2) IMPORTAR XML;<br />
+
+              - CAMINHO: MATERIAIS ►  ROTINAS DE APOIO ►  IMPORTA XML NFE<br />
+              - CLICAR NO DISKET ... ;PARA PROCURAR O ARQUIVO XML NA PASTA XML UNIDOCS;<br />
+              - COM O ARQUIVO XML EXPOSTO, SELECIONÁ-LO PARA QUE FIQUE COM A COR DESTACADA;<br />
+              - NA SUB-ABA PARAMETROS ADICIONAIS, MARCAR O CHECKED "USAR LINHA COM BASE NO CODIGO IBGE?"<br />
+              - RETORNANDO A SUB-ABA IMPORTAÇÃO, NO CAMPO TIPO IMPORTAÇÃO, SELECIONAR "CTRC - EMISSÃO PRÓPRIA",<br />
+              - EM "INFORMAÇÕES DO CONHECIMENTO", PREENCHER:<br /><br />
+
+              ►  FROTA/PLACA: (PLACA CAVALO-MECÂNICO);<br />
+              ►  MOTORISTA: <br />
+              ►  SEGURO: 1(PADRÃO) OU 3(SE HOUVER SUBCONTRATAÇÃO);<br />
+              ►  PRODUTO: 1270 (PRODUTO ACABADO) OU 1255(GARRAFA DE INSUMO), OUTRO PRODUTO CONFORME O TIPO DE CARGA TRANSPORTADA;<br />
+              ►  TABELA DE FRETE C/ICMS: 256(AMBEV) OU 506(HEINEKEN) OU 522(ARCELOMITTAL)<br />
+              ►  TABELA DE FRETE C/ICMS: 256(AMBEV) OU 506(HEINEKEN) OU 522(ARCELOMITTAL)<br />
+              ►  LINHA: LINHA DE EMBARQUE DO CTE; LOCAL DE ORIGEM X DESTINO<br />
+              ►  REGIÃO: 1(PADRÃO) - TERRITORIO NACIONAL<br />
+              ►  ITEM TARIFA: NA ABA PRINCIPAL DO RODOPAR: FATURAMENTO ►  CADASTROS ►  TABELAS DE FRETE ►  TABELAS ►  EM "CODIGO FRETE"<br />
+              PREENCHER 256(AMBEV) ►  NA SUB-ABA "TARIFA" CLICAR NO DISKETI DO BINÓCULOS, EM DESCRIÇÃO PREENCHER A ROTA DO CTE, E ATUALIZAR <br />
+              COM F4, OU ALT + A; NOS VALORES APRESENTADOS PROCURAR PELO NUMERO DA COLUNA ITEM TARIFA;<br />
+              ►  COD. FILIAL: 3 (SE FOR ANBEV MINAS) OU 21(SE FOR AMBEV RIO DE JANEIRO);<br /><br />
+
+              - CONFERIR SE TODOS OS VALORES DOS CAMPOS ESTÃO CORRETOS,SE O COLCHETE DA SUB-ABA PARAMETROS ADICIONAIS ESTÁ MARCADO, E O ARQUIVO
+              XML EXPOSTO ESTÁ SELECIONADO(COR DESTACADA);<br /><br />
+
+              !!! ATENÇÃO: TODOS OS VALORES DEVEM ESTAR PREENCHIDOS CORRETAMENTE, O SISTEMA PERMITE APENAS UMA IMPORTAÇÃO DE XML POR ARQUIVO,
+              CASO HOUVER ERRO PODE TER COMO CONSEQUENCIA CANCELAMENTO DE CTE;<br /><br />
+
+              - CLICAR NO BOTAO PROCESSAR; ESPERAR ATÉ O RETORNO DO LOG "FIM DA IMPORTAÇÃO";``
+
+            </div>
           </div>
         ),
       });
@@ -626,18 +678,19 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
 
   return (
     <div className="app">
-      <Link to="/generator" hrefLang="en">
+      <Link to="/generator" target='_blank' hrefLang="en">
         <button
           style={{
             padding: '10px 20px',
             backgroundColor: '#092d57ff',
-            color: 'white',
+            color: '#fff',
             border: 'none',
             borderRadius: '6px',
             fontSize: '16px',
             cursor: 'pointer',
             transition: 'background-color 0.3s ease',
             marginBottom: '20px',
+
           }}
 
         >
@@ -689,33 +742,53 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
           </div>
 
           <div className="form-section">
-            <h3>Dados do Transporte</h3>
-            <div className="form-grid">
-              {[
-                { name: 'numeroPedido', label: 'Nº PEDIDO' },
-                { name: 'motorista', label: 'MOTORISTA' },
-                { name: 'cavalo', label: 'CAVALO' },
-                { name: 'reboque', label: 'REBOQUE' },
-                { name: 'linha', label: 'LINHA' },
-                { name: 'proprietario', label: 'PROPRIETÁRIO (CNPJ/CPF)' },
-                { name: 'itemFrete', label: 'ITEM FRETE' },
-                { name: 'eixos', label: 'EIXOS' },
-                { name: 'freteSemImposto', label: 'FRETE S/IMPOSTO' },
-                { name: 'freteComImposto', label: 'FRETE C/IMPOSTO' },
-                { name: 'contaBancaria', label: 'CONTA BANCÁRIA' },
-                { name: 'freteTerceiroCheio', label: 'FRETE TERCEIRO CHEIO' },
-                { name: 'freteTerceiroTotal', label: 'FRETE TERCEIRO TOTAL' },
-              ].map(field => (
-                <input
-                  key={field.name}
-                  name={field.name}
-                  placeholder={field.label}
-                  value={formData[field.name as keyof FormData]}
-                  onChange={handleFormChange}
-                />
-              ))}
-            </div>
-          </div>
+  <h3>Dados do Transporte</h3>
+  <div className="form-container">
+    <div className="textarea-wrapper">
+      <textarea
+        style={{
+          width: '100%',
+          height: '100%',
+          resize: 'none',
+          padding: '10px',
+          borderRadius: '12px',
+          fontSize: '1.1rem',
+          outline: 'none',
+          background: '#142c46ff',
+          color: '#ced7e0ff',
+        }}
+        name=""
+        id=""
+      ></textarea>
+    </div>
+    <div className="form-grid">
+      {[
+        { name: 'numeroPedido', label: 'Nº PEDIDO' },
+        { name: 'motorista', label: 'MOTORISTA' },
+        { name: 'cavalo', label: 'CAVALO' },
+        { name: 'reboque', label: 'REBOQUE' },
+        { name: 'linha', label: 'LINHA' },
+        { name: 'proprietario', label: 'PROPRIETÁRIO (CNPJ/CPF)' },
+        { name: 'itemFrete', label: 'ITEM FRETE' },
+        { name: 'eixos', label: 'EIXOS' },
+        { name: 'freteSemImposto', label: 'FRETE S/IMPOSTO' },
+        { name: 'freteComImposto', label: 'FRETE C/IMPOSTO' },
+        { name: 'contaBancaria', label: 'CONTA BANCÁRIA' },
+        { name: 'freteTerceiroCheio', label: 'FRETE TERCEIRO CHEIO' },
+        { name: 'freteTerceiroTotal', label: 'FRETE TERCEIRO TOTAL' },
+      ].map((field) => (
+        <input
+          key={field.name}
+          name={field.name}
+          placeholder={field.label}
+          value={formData[field.name as keyof FormData]}
+          onChange={handleFormChange}
+        />
+      ))}
+    </div>
+  </div>
+</div>
+
 
           <div className="tabs-container">
             <div className="tabs">
