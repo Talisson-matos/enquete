@@ -1,0 +1,243 @@
+/* components/ExtratorXML.css (melhorada, caprichada) */
+.extrator-xml {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  backdrop-filter: blur(10px);
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.file-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.file-input {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.15);
+  border: 2px dashed #4a90e2;
+  border-radius: 12px;
+  padding: 15px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  gap: 10px;
+  text-align: center;
+}
+
+.file-label:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: #fff;
+}
+
+.file-icon {
+  font-size: 1.5rem;
+}
+
+.peso-opcao {
+  display: flex;
+  gap: 20px;
+  background: rgba(0,0,0,0.2);
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  color: #cce5ff;
+  font-weight: 500;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.radio-label input {
+  accent-color: #4a90e2;
+}
+
+.btn-extrair {
+  padding: 12px 28px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-extrair:hover {
+  background: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74,144,226,0.4);
+}
+
+.btn-extrair:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.resultados {
+  margin-top: 30px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.resultados-title {
+  font-size: 1.4rem;
+  color: #a8d8ff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.grid-dados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.item-dado {
+  background: rgba(255,255,255,0.05);
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.item-dado:hover {
+  transform: translateY(-3px);
+}
+
+.item-label {
+  font-weight: 600;
+  color: #cce5ff;
+}
+
+.btn-copiar {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.btn-copiar:hover {
+  background: #4a90e2;
+}
+
+.btn-copiar.no-value {
+  background: rgba(255,0,0,0.2);
+  cursor: default;
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 40px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Adições ao App.css para a aba Pedágio */
+.aba-pedagio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.texto-formatado {
+  background: rgba(0,0,0,0.2);
+  padding: 20px;
+  border-radius: 12px;
+  white-space: pre-line;
+  font-family: monospace;
+  color: #fff;
+  text-align: left;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.btn-copiar-tudo {
+  padding: 12px 28px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-copiar-tudo:hover {
+  background: #219653;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39,174,96,0.4);
+}
+
+/* Para as outras abas, adicionar estilos semelhantes se necessário */
+.aba-liberacao, .aba-monitoramento {
+  padding: 20px;
+}
+
+.botoes-liberacao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.grid-monitoramento {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.grid-monitoramento .item {
+  background: rgba(255,255,255,0.05);
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
