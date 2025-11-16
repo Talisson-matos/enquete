@@ -5,6 +5,8 @@ import ExtratorXML from '../components/ExtratorXML';
 import Liberacao from '../components/Liberacao';
 import Monitoramento from '../components/Monitoramento';
 import SolicitacaoPedagio from '../components/SolicitacaoPedagio';
+import { useNavigate } from 'react-router-dom';
+
 
 interface FormData {
   filial: string;
@@ -49,6 +51,7 @@ const App: React.FC = () => {
   });
   const [extratorData, setExtratorData] = useState<ExtratorData | null>(null);
   const [pesoTipo, setPesoTipo] = useState<'liquido' | 'bruto'>('liquido');
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -74,11 +77,18 @@ const App: React.FC = () => {
     if (fileInput) fileInput.value = '';
   };
 
+  const handleClick = () => {    
+    navigate('/')
+  }
+
+
   return (
     <div className="app-container">
       <header className="app-header">
         <h1>Gerenciador de Transporte</h1>
       </header>
+
+      <button className='icon_home' onClick={handleClick}>🏠 Home </button>
 
       {/* Formulário Primordial */}
       <section className="form-section">
@@ -120,19 +130,19 @@ const App: React.FC = () => {
 
       {/* Abas */}
       <div className="tabs-container">
-        <div className="tabs">
+        <div className="container-metalico">
           {[
-            { id: 'extrator', label: 'Extrator de XML', icon: '📄' },
-            { id: 'liberacao', label: 'Liberação', icon: '✅' },
-            { id: 'monitoramento', label: 'Monitoramento', icon: '📡' },
-            { id: 'pedagio', label: 'Solicitação de Pedágio', icon: '🛣️' },
+            { id: 'extrator', label: 'Extrator de XML',  },
+            { id: 'liberacao', label: 'Liberação' },
+            { id: 'monitoramento', label: 'Monitoramento' },
+            { id: 'pedagio', label: 'Solicitação de Pedágio' },
           ].map(tab => (
             <button
               key={tab.id}
-              className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+              className={`botao-metalico ${activeTab === tab.id ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.id as any)}
             >
-              <span className="tab-icon">{tab.icon}</span>
+              
               {tab.label}
             </button>
           ))}
