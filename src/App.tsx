@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 interface FormData {
   numeroPedido: string;
@@ -106,7 +107,14 @@ const App: React.FC = () => {
   const [accordionStates, setAccordionStates] = useState<{ [key: string]: boolean }>({});
   const [valorFrete, setValorFrete] = useState('');
   const [aliquota, setAliquota] = useState('');
-  const [creditoSelecionado, setCreditoSelecionado] = useState('');
+  const [creditoSelecionado, setCreditoSelecionado] = useState(''); 
+ const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/generator') 
+  }
+
+
 
   const handleIniciar = () => {
     if (!selectedOperacao || !selectedTipoMotorista) {
@@ -678,8 +686,8 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
 
   return (
     <div className="app">
-      <Link to="/generator" target='_blank' hrefLang="en">
-        <button
+      
+  <button onClick={handleClick}
           style={{
             padding: '10px 20px',
             backgroundColor: '#092d57ff',
@@ -696,7 +704,7 @@ GUIA/DUPLICATA: ${capturedData.gnreDuplicata || ''}
         >
           Generator
         </button>
-      </Link>
+     
       <AnimatePresence>
         {showInitialScreen && (
           <motion.div

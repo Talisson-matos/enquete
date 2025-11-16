@@ -7,12 +7,13 @@ import './index.css'
 
 
 
+
 createRoot(document.getElementById('root')!).render(
 <React.StrictMode>
    <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} />
-      <Route path="/generator" element={<Generator />} />
+      <Route path="/generator" element={<Generator />} />      
     </Routes>
   </BrowserRouter>,
 </React.StrictMode>
